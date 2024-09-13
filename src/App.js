@@ -299,7 +299,7 @@ function App() {
               {(dataList.length ?? 0) * 1000}
             </p>
             <p>
-              <strong>UPI ID:</strong> {'2334242423243@ybl'}
+              <strong>UPI ID:</strong> {'REFERALAB.09@cmsidfc'}
               <button className="copy-button" onClick={copyToClipboard}>
                 Copy
               </button>
