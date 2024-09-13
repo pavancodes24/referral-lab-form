@@ -299,6 +299,10 @@ function App() {
               {(dataList.length ?? 0) * 1000}
             </p>
             <p>
+              <strong>Merchant Name : </strong>
+              {'REFERRAL LABS OPC PRIVATE...'}
+            </p>
+            <p>
               <strong>UPI ID:</strong> {'REFERALAB.09@cmsidfc'}
               <button className="copy-button" onClick={copyToClipboard}>
                 Copy
