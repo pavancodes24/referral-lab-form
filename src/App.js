@@ -118,6 +118,7 @@ function App() {
   const handleDelete = (index) => {
     const updatedList = dataList.filter((_, i) => i !== index);
     setDataList(updatedList);
+    setIsEditing(false);
   };
 
   const handlePaymentClick = async () => {
@@ -227,7 +228,12 @@ function App() {
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Type:</label>
-
+          {console.log(
+            dataList.filter((item) => item.type === 'self'),
+            dataList,
+            isEditing,
+            'testing'
+          )}
           {dataList.filter((item) => item.type === 'Self').length > 0 &&
           Object.values(dataList.filter((item) => item.type === 'Self')[0])
             .length == 8 &&
