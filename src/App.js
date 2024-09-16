@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from './supabaseClient';
+import { Audio } from 'react-loader-spinner';
 import './App.css';
 
 function App() {
@@ -17,13 +19,22 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+  const [loader, setLoader] = useState(false);
+
+  const [noPhone, setNoPhone] = useState(0);
+  const [noEmpId, setNoEmpId] = useState('');
+  const [noName, setNoName] = useState('');
+
+  const [utrData, setUtrData] = useState('');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const name = params.get('name') || '';
     const empid = params.get('empid') || '';
     const phonenumber = params.get('phonenumber') || '';
-
+    setNoPhone(phonenumber);
+    setNoEmpId(empid);
+    setNoName(name);
     if (formData.type === 'Self') {
       setFormData((prevData) => ({
         ...prevData,
@@ -85,12 +96,70 @@ function App() {
     setDataList(updatedList);
   };
 
-  const handlePaymentClick = () => {
+  const handlePaymentClick = async () => {
+    setLoader(true);
+    const { data: insertData, error } = await supabase
+      .from('users')
+      .insert([
+        {
+          name: noName,
+          empid: noEmpId,
+          phonenumber: noPhone,
+          beneficiary: dataList,
+        },
+      ])
+      .single();
+
+    if (error) {
+      console.error('Error inserting user:', error.message);
+    } else {
+      console.log('User inserted successfully:', insertData, error);
+    }
+
+    setLoader(false);
+
     setShowPaymentPopup(true);
   };
 
   const handleClosePopup = () => {
     setShowPaymentPopup(false);
+  };
+
+  const handleSubmitPayment = async () => {
+    // Step 1: Find the most recent entry with the given phone number
+    const { data: recentUserData, error: fetchError } = await supabase
+      .from('users')
+      .select('id') // Fetch only the 'id' field to identify the latest entry
+      .eq('phonenumber', noPhone ?? 0) // Match the specific phone number
+      .order('id', { ascending: false }) // Order by 'id' in descending order (latest entry first)
+      .limit(1); // Limit the result to the latest entry
+
+    if (fetchError) {
+      console.error('Error fetching recent user:', fetchError.message);
+      return; // Exit if there's an error
+    }
+
+    if (recentUserData.length === 0) {
+      console.error('No user found with the given phone number');
+      return; // Exit if no user is found
+    }
+
+    const latestUserId = recentUserData[0].id; // Get the 'id' of the latest entry
+
+    // Step 2: Perform the update using the id of the latest record
+    const { data: updateData, error: updateError } = await supabase
+      .from('users')
+      .update({ payment_done: true, utr: utrData }) // Update the fields
+      .eq('id', latestUserId); // Use the 'id' to ensure only the latest record is updated
+
+    if (updateError) {
+      console.error('Error updating user:', updateError.message);
+      alert('something went wrong');
+    } else {
+      console.log('User updated successfully:', updateData);
+      alert('Payment Success');
+      window.location.reload();
+    }
   };
 
   const copyToClipboard = () => {
@@ -106,9 +175,31 @@ function App() {
 
   const isReadOnly = formData.type === 'Self';
 
-  return (
+  const styles = {
+    container: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+    },
+  };
+  return loader ? (
+    <>
+      <div style={styles.container}>
+        <Audio
+          height="80"
+          width="80"
+          radius="9"
+          color="green"
+          ariaLabel="loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    </>
+  ) : (
     <div className="form-container">
-      <h1 className="form-title">Insurance Form</h1>
+      <h1 className="form-title"> Form</h1>
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Type:</label>
@@ -227,6 +318,7 @@ function App() {
         </button>
         <br />
         <button
+          style={{ backgroundColor: dataList.length == 0 ? 'gray' : 'green' }}
           type="button"
           className="payment-button"
           onClick={handlePaymentClick}
@@ -310,14 +402,23 @@ function App() {
             </p>
             <p>
               <strong>
-                UTR : <input />
+                UTR :{' '}
+                <input
+                  onChange={(e) => setUtrData(e.target.value)}
+                  maxLength={12}
+                />
               </strong>{' '}
             </p>
-            <button className="close-popup" onClick={handleClosePopup}>
+            {/* <button className="close-popup" onClick={handleClosePopup}>
               Close
-            </button>
+            </button> */}
             &nbsp;
-            <button className="close-popup" onClick={handleClosePopup}>
+            <button
+              style={{ backgroundColor: utrData.length == 12 ? 'red' : 'grey' }}
+              className="close-popup"
+              onClick={handleSubmitPayment}
+              disabled={utrData.length !== 12}
+            >
               Submit
             </button>
           </div>
