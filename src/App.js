@@ -227,11 +227,7 @@ function App() {
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Type:</label>
-          {console.log(
-            dataList,
-            'checker',
-            dataList.filter((item) => item.type === 'Self')
-          )}
+
           {dataList.filter((item) => item.type === 'Self').length > 0 &&
           Object.values(dataList.filter((item) => item.type === 'Self')[0])
             .length == 8 &&
@@ -244,7 +240,7 @@ function App() {
               className="form-input"
               required
             >
-              <option value="">Select Type3</option>
+              <option value="">Select Type</option>
               <option value="Self">Self</option>
               <option value="Others">Others</option>
             </select>
@@ -257,7 +253,7 @@ function App() {
               className="form-input"
               required
             >
-              <option value="">Select Type2</option>
+              <option value="">Select Type</option>
               <option value="Self">Self</option>
               <option value="Others">Others</option>
             </select>
@@ -269,7 +265,7 @@ function App() {
               className="form-input"
               required
             >
-              <option value="">Select Type1</option>
+              <option value="">Select Type</option>
               <option value="Self">Self</option>
               <option value="Others">Others</option>
             </select>
