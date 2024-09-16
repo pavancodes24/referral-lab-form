@@ -4,8 +4,9 @@ import { Audio } from 'react-loader-spinner';
 import './App.css';
 
 function App() {
+  const [dataList, setDataList] = useState([]);
   const [formData, setFormData] = useState({
-    type: '',
+    type: 'Self',
     name: '',
     phone: '',
     empId: '',
@@ -15,7 +16,6 @@ function App() {
     state: '',
   });
 
-  const [dataList, setDataList] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
@@ -47,7 +47,31 @@ function App() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'type') {
+      if (value === 'Others') {
+        setFormData({
+          type: 'Others',
+          name: '',
+          phone: '',
+          empId: '',
+          gender: '',
+          dob: '',
+          city: '',
+          state: '',
+        });
+      } else {
+        setFormData({
+          type: 'Self',
+          name: '',
+          phone: '',
+          empId: '',
+          gender: '',
+          dob: '',
+          city: '',
+          state: '',
+        });
+      }
+    } else setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -74,7 +98,7 @@ function App() {
     }
 
     setFormData({
-      type: '',
+      type: dataList.filter((item) => item.type === 'Self') ? 'Others' : 'Self',
       name: '',
       phone: '',
       empId: '',
@@ -203,18 +227,61 @@ function App() {
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Type:</label>
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className="form-input"
-            required
-          >
-            <option value="">Select Type</option>
-            <option value="Self">Self</option>
-            <option value="Others">Others</option>
-          </select>
+          {console.log(
+            dataList,
+            'checker',
+            dataList.filter((item) => item.type === 'Self')
+          )}
+          {dataList.filter((item) => item.type === 'Self').length > 0 &&
+          Object.values(dataList.filter((item) => item.type === 'Self')[0])
+            .length == 8 &&
+          !isEditing ? (
+            <select
+              disabled
+              name="type"
+              value={'Others'}
+              // onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select Type3</option>
+              <option value="Self">Self</option>
+              <option value="Others">Others</option>
+            </select>
+          ) : isEditing ? (
+            <select
+              disabled
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select Type2</option>
+              <option value="Self">Self</option>
+              <option value="Others">Others</option>
+            </select>
+          ) : (
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select Type1</option>
+              <option value="Self">Self</option>
+              <option value="Others">Others</option>
+            </select>
+          )}
         </div>
+        {formData.type == 'Others' && (
+          <div style={{ color: 'red', fontSize: '12px' }}>
+            <span>Enter Card Holder details </span>
+          </div>
+        )}
+
+        <br />
 
         <div className="form-group">
           <label className="form-label">Name:</label>
