@@ -46,7 +46,7 @@ function CloudinaryUpload({ setUploadedUrl, setImgLoader }) {
       <input
         type="file"
         accept="image/*"
-        capture="environment" // For mobile to capture images from camera
+        // capture="environment" // For mobile to capture images from camera
         onChange={handleChange}
         className="file-input"
       />
