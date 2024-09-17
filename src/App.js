@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { Audio } from 'react-loader-spinner';
 import './App.css';
+import CloudinaryUpload from './CloudinaryUpload';
 
 function App() {
   const [dataList, setDataList] = useState([]);
+  const [uploadedUrl, setUploadedUrl] = useState('');
   const [formData, setFormData] = useState({
     type: 'Self',
     name: '',
@@ -174,7 +176,7 @@ function App() {
     // Step 2: Perform the update using the id of the latest record
     const { data: updateData, error: updateError } = await supabase
       .from('users')
-      .update({ payment_done: true, utr: utrData }) // Update the fields
+      .update({ payment_done: true, utr: uploadedUrl }) // Update the fields
       .eq('id', latestUserId); // Use the 'id' to ensure only the latest record is updated
 
     if (updateError) {
@@ -228,12 +230,7 @@ function App() {
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Type:</label>
-          {console.log(
-            dataList.filter((item) => item.type === 'self'),
-            dataList,
-            isEditing,
-            'testing'
-          )}
+
           {dataList.filter((item) => item.type === 'Self').length > 0 &&
           Object.values(dataList.filter((item) => item.type === 'Self')[0])
             .length == 8 &&
@@ -469,7 +466,7 @@ function App() {
                 Copy
               </button>
             </p>
-            <p>
+            {/* <p>
               <strong>
                 UTR :{' '}
                 <input
@@ -477,19 +474,26 @@ function App() {
                   maxLength={12}
                 />
               </strong>{' '}
+            </p> */}
+            <p>
+              <CloudinaryUpload setUploadedUrl={setUploadedUrl} />
             </p>
-            {/* <button className="close-popup" onClick={handleClosePopup}>
-              Close
-            </button> */}
+            {/* <button className="close-popup">Cancel</button> */}
             &nbsp;
             <button
-              style={{ backgroundColor: utrData.length == 12 ? 'red' : 'grey' }}
+              style={{
+                backgroundColor: uploadedUrl !== '' ? 'green' : 'grey',
+              }}
               className="close-popup"
               onClick={handleSubmitPayment}
-              disabled={utrData.length !== 12}
+              disabled={uploadedUrl == '' || uploadedUrl == null}
             >
               Submit
             </button>
+            &nbsp;
+            <span style={{ color: 'red' }} onClick={handleClosePopup}>
+              Cancel
+            </span>
           </div>
         </div>
       )}
