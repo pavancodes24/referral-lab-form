@@ -2,11 +2,49 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { Audio } from 'react-loader-spinner';
 import './App.css';
+import { ToastContainer, toast } from 'react-toastify';
+
 import CloudinaryUpload from './CloudinaryUpload';
 
 function App() {
+  const notifySuccess = () =>
+    toast.success('sucessfully added!', {
+      position: 'top-right',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
+
+  const notifyDelete = () =>
+    toast.error('Deleted Successfully!', {
+      position: 'top-right',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
+
+  const notifySuccessUpdate = () =>
+    toast.success('sucessfully Updated!', {
+      position: 'top-right',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
   const [dataList, setDataList] = useState([]);
   const [uploadedUrl, setUploadedUrl] = useState('');
+  const [imgLoader, setImgLoader] = useState(false);
   const [formData, setFormData] = useState({
     type: 'Self',
     name: '',
@@ -90,6 +128,7 @@ function App() {
       );
       setDataList(updatedList);
       setIsEditing(false);
+      notifySuccessUpdate();
     } else {
       const selfCount = dataList.filter((item) => item.type === 'Self').length;
       if (selfCount > 0 && formData.type === 'Self') {
@@ -97,6 +136,7 @@ function App() {
         return;
       }
       setDataList([...dataList, formData]);
+      notifySuccess();
     }
 
     setFormData({
@@ -121,6 +161,7 @@ function App() {
     const updatedList = dataList.filter((_, i) => i !== index);
     setDataList(updatedList);
     setIsEditing(false);
+    notifyDelete();
   };
 
   const handlePaymentClick = async () => {
@@ -450,23 +491,38 @@ function App() {
 
       {showPaymentPopup && (
         <div className="payment-popup">
-          <div className="payment-popup-content">
-            <h3>Payment Details</h3>
-            <p>
-              <strong>Amount to be paid:</strong> ₹&nbsp;
-              {(dataList.length ?? 0) * 1000}
-            </p>
-            <p>
-              <strong>Merchant Name : </strong>
-              {'REFERRAL LABS OPC PRIVATE...'}
-            </p>
-            <p>
-              <strong>UPI ID:</strong> {'REFERALAB.09@cmsidfc'}
-              <button className="copy-button" onClick={copyToClipboard}>
-                Copy
-              </button>
-            </p>
-            {/* <p>
+          {imgLoader ? (
+            <>
+              <div style={styles.container}>
+                <Audio
+                  height="80"
+                  width="80"
+                  radius="9"
+                  color="green"
+                  ariaLabel="loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              </div>
+            </>
+          ) : (
+            <div className="payment-popup-content">
+              <h3>Payment Details</h3>
+              <p>
+                <strong>Amount to be paid:</strong> ₹&nbsp;
+                {(dataList.length ?? 0) * 1000}
+              </p>
+              <p>
+                <strong>Merchant Name : </strong>
+                {'REFERRAL LABS OPC PRIVATE...'}
+              </p>
+              <p>
+                <strong>UPI ID:</strong> {'REFERALAB.09@cmsidfc'}
+                <button className="copy-button" onClick={copyToClipboard}>
+                  Copy
+                </button>
+              </p>
+              {/* <p>
               <strong>
                 UTR :{' '}
                 <input
@@ -475,26 +531,30 @@ function App() {
                 />
               </strong>{' '}
             </p> */}
-            <p>
-              <CloudinaryUpload setUploadedUrl={setUploadedUrl} />
-            </p>
-            {/* <button className="close-popup">Cancel</button> */}
-            &nbsp;
-            <button
-              style={{
-                backgroundColor: uploadedUrl !== '' ? 'green' : 'grey',
-              }}
-              className="close-popup"
-              onClick={handleSubmitPayment}
-              disabled={uploadedUrl == '' || uploadedUrl == null}
-            >
-              Submit
-            </button>
-            &nbsp;
-            <span style={{ color: 'red' }} onClick={handleClosePopup}>
-              Cancel
-            </span>
-          </div>
+              <p>
+                <CloudinaryUpload
+                  setUploadedUrl={setUploadedUrl}
+                  setImgLoader={setImgLoader}
+                />
+              </p>
+              {/* <button className="close-popup">Cancel</button> */}
+              &nbsp;
+              <button
+                style={{
+                  backgroundColor: uploadedUrl !== '' ? 'green' : 'grey',
+                }}
+                className="close-popup"
+                onClick={handleSubmitPayment}
+                disabled={uploadedUrl == '' || uploadedUrl == null}
+              >
+                Submit
+              </button>
+              &nbsp;
+              <span style={{ color: 'red' }} onClick={handleClosePopup}>
+                Cancel
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>
