@@ -225,7 +225,7 @@ function App() {
       alert('something went wrong');
     } else {
       console.log('User updated successfully:', updateData);
-      alert('Payment Success');
+      alert('Payment Success(Approval takes 24-48 hrs');
       window.location.reload();
     }
   };
