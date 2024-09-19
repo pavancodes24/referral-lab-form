@@ -508,6 +508,7 @@ function App() {
           ) : (
             <div className="payment-popup-content">
               <h3>Payment Details</h3>
+              <h4>(Make Payment & upload screenshot)</h4>
               <p>
                 <strong>Amount to be paid:</strong> ₹&nbsp;
                 {(dataList.length ?? 0) * 3000}
