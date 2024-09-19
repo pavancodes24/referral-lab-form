@@ -510,7 +510,7 @@ function App() {
               <h3>Payment Details</h3>
               <p>
                 <strong>Amount to be paid:</strong> ₹&nbsp;
-                {(dataList.length ?? 0) * 1000}
+                {(dataList.length ?? 0) * 3000}
               </p>
               <p>
                 <strong>Merchant Name : </strong>
