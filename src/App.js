@@ -50,6 +50,8 @@ function App() {
     name: '',
     phone: '',
     empId: '',
+    email: '',
+    pincode: '',
     gender: '',
     dob: '',
     city: '',
@@ -94,6 +96,8 @@ function App() {
           name: '',
           phone: '',
           empId: '',
+          email: '',
+          pincode: '',
           gender: '',
           dob: '',
           city: '',
@@ -105,6 +109,8 @@ function App() {
           name: '',
           phone: '',
           empId: '',
+          email: '',
+          pincode: '',
           gender: '',
           dob: '',
           city: '',
@@ -144,6 +150,8 @@ function App() {
       name: '',
       phone: '',
       empId: '',
+      email: '',
+      pincode: '',
       gender: '',
       dob: '',
       city: '',
@@ -225,14 +233,14 @@ function App() {
       alert('something went wrong');
     } else {
       console.log('User updated successfully:', updateData);
-      alert('Payment Success(Approval takes 24-48 hrs');
+      alert('Payment Success(Approval takes 24-48 hrs)');
       window.location.reload();
     }
   };
 
   const copyToClipboard = () => {
     navigator.clipboard
-      .writeText('2334242423243@ybl')
+      .writeText('REFERALAB.09@cmsidfc')
       .then(() => {
         alert('UPI ID copied to clipboard!');
       })
@@ -274,7 +282,7 @@ function App() {
 
           {dataList.filter((item) => item.type === 'Self').length > 0 &&
           Object.values(dataList.filter((item) => item.type === 'Self')[0])
-            .length == 8 &&
+            .length == 10 &&
           !isEditing ? (
             <select
               disabled
@@ -345,6 +353,9 @@ function App() {
             onChange={handleChange}
             className="form-input"
             pattern="[0-9]{10}"
+            onInvalid={(e) =>
+              e.target.setCustomValidity('Please Enter a Valid  Mobile Number')
+            }
             maxLength="10"
             inputMode="numeric"
             placeholder="Enter 10-digit mobile number"
@@ -367,6 +378,35 @@ function App() {
             />
           </div>
         )}
+
+        <div className="form-group">
+          <label className="form-label">Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="form-input"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Pincode:</label>
+          <input
+            type="text"
+            name="pincode"
+            value={formData.pincode}
+            onInvalid={(e) =>
+              e.target.setCustomValidity('Please Enter a Valid  Pincode')
+            }
+            pattern="[0-9]{6}"
+            maxLength="6"
+            onChange={handleChange}
+            className="form-input"
+            required
+          />
+        </div>
 
         <div className="form-group">
           <label className="form-label">Gender:</label>
@@ -456,6 +496,10 @@ function App() {
                 </p>
                 <p>
                   <strong>Emp ID:</strong> {item.empId || '-'}
+                </p>
+
+                <p>
+                  <strong>Email:</strong> {item.email}
                 </p>
                 <p>
                   <strong>Gender:</strong> {item.gender}
